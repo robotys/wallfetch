@@ -6,6 +6,7 @@
 	<script>
 		var stop_feeding = false;
 		var total_feed = 0;
+		var last_next = '';
 		// load fb sdk
 		window.fbAsyncInit = function() {
 			FB.init({
@@ -54,9 +55,10 @@
 					        $('.status').html(status);
 					        show_feed(response);
 					        get_feed(response.paging.next);
+					        last_next = next;
 				        } 
 				        else{
-				        	console.log('break point! ',response);
+				        	console.log('break point! Last next: '+last_next,response);
 				        	
 				        	$('.status').html('Done! Total fetched: '+total_feed);
 				        	$('.feed_switch').hide();

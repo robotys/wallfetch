@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>get all your fb status &bull; throwback</title>
+	<title></title>
 	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 	<script>
 		var stop_feeding = false;
@@ -41,7 +41,7 @@
 		function get_feed(next){
 			// console.log(stop_feeding);
 			if(stop_feeding == false){
-				if(next == undefined) next = '/me/feed?limit=200&fields=message';
+				if(next == undefined) next = '/me/feed?limit=1000&fields=message';
 				FB.api(
 				    next,
 				    function (response) {
@@ -49,11 +49,14 @@
 				        /* handle the result */
 				        if(response.paging != undefined){
 				        	// console.log('fetch '+response.data.length,'paging: ',response.paging.next);	
-				        	console.log(response);
+				        	// console.log(response);
 					        total_feed = total_feed+response.data.length;
 					        var status = 'total fetched: '+total_feed+'. Next batch ...';
 					        // console.log('bytes: '+ $('.feeds').html().length);
 					        $('.status').html(status);
+
+					        var title = '('+total_feed+') WALLFETCH';
+					        $('title').html(title);
 					        show_feed(response);
 					        get_feed(response.paging.next);
 					        last_next = next;
@@ -61,8 +64,9 @@
 				        } 
 				        else{
 							// kalau rosak, run manually!
-				        	console.log('break point! Last next: '+last_next, last_response);
-				        	console.log('bytes: '+ $('.feeds').html().length);
+				        	console.log('Last: '+last_next, last_response);
+				        	console.log('Now: '+next, response);
+				        	// console.log('bytes: '+ $('.feeds').html().length);
 
 				        	$.get(last_next, function(resp){
 				        		console.log(resp);

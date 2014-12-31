@@ -56,9 +56,9 @@
 					        get_feed(response.paging.next);
 				        } 
 				        else{
-				        	console.log('break point! '+response);
+				        	console.log('break point! ',response);
 				        	
-				        	$('.status').html('all available feeds has been fetch!');
+				        	$('.status').html('all available feeds has been fetch. Total fetched: '+total_feed);
 				        	$('.feed_switch').hide();
 				        } 
 

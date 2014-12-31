@@ -7,6 +7,7 @@
 		var stop_feeding = false;
 		var total_feed = 0;
 		var last_next = '';
+		var last_response;
 		// load fb sdk
 		window.fbAsyncInit = function() {
 			FB.init({
@@ -40,7 +41,7 @@
 		function get_feed(next){
 			// console.log(stop_feeding);
 			if(stop_feeding == false){
-				if(next == undefined) next = '/me/feed';
+				if(next == undefined) next = '/me/feed?limit=200&fields=message';
 				FB.api(
 				    next,
 				    function (response) {
@@ -48,20 +49,30 @@
 				        /* handle the result */
 				        if(response.paging != undefined){
 				        	// console.log('fetch '+response.data.length,'paging: ',response.paging.next);	
-
+				        	console.log(response);
 					        total_feed = total_feed+response.data.length;
 					        var status = 'total fetched: '+total_feed+'. Next batch ...';
-
+					        // console.log('bytes: '+ $('.feeds').html().length);
 					        $('.status').html(status);
 					        show_feed(response);
-					        get_feed(response.paging.next);
+					        // get_feed(response.paging.next);
 					        last_next = next;
+					        last_response = response;
 				        } 
 				        else{
-				        	console.log('break point! Last next: '+last_next,response);
-				        	
-				        	$('.status').html('Done! Total fetched: '+total_feed);
-				        	$('.feed_switch').hide();
+							// kalau rosak, run manually!
+				        	console.log('break point! Last next: '+last_next, last_response);
+				        	console.log('bytes: '+ $('.feeds').html().length);
+
+				        	$.get(last_next, function(resp){
+				        		console.log(resp);
+				        		// show_feed(resp);
+					        	// get_feed(resp.paging.next);
+				        	});
+				        	// get_feed(last_next);
+
+				        	// $('.status').html('Done! Total fetched: '+total_feed);
+				        	// $('.feed_switch').hide();
 				        } 
 
 				      }

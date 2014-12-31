@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>get all your fb status &bull; throwback</title>
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script>
+		var stop_feeding = false;
+		var total_feed = 0;
+		// load fb sdk
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId      : '344154972452584',
+				xfbml      : false,
+				version    : 'v2.1',
+				status	   : true
+			});
+
+			// run code here
+			$(document).ready(function(){
+				
+				FB.login(function(){
+					
+					get_feed();
+				
+				}, {scope: 'read_stream'});
+
+			});
+		};
+
+		(function(d, s, id){
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.net/en_US/sdk.js";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+
+
+		function get_feed(next){
+			// console.log(stop_feeding);
+			if(stop_feeding == false){
+				if(next == undefined) next = '/me/feed';
+				FB.api(
+				    next,
+				    function (response) {
+				      if (response && !response.error) {
+				        /* handle the result */
+				        if(response.paging != undefined){
+				        	// console.log('fetch '+response.data.length,'paging: ',response.paging.next);	
+
+					        total_feed = total_feed+response.data.length;
+					        var status = 'fetched: '+response.data.length+', overall: '+total_feed+'. Fetching next batch ...';
+
+					        $('.status').html(status);
+					        show_feed(response);
+					        get_feed(response.paging.next);
+				        } 
+				        else{
+				        	console.log('break point! '+response);
+				        	
+				        	$('.status').html('all available feeds has been fetch!');
+				        	$('.feed_switch').hide();
+				        } 
+
+				      }
+				    }
+				);
+			}
+		}
+
+		function show_feed(response){
+			$.each(response.data, function(index,object){
+				if(object.message !== undefined){
+					var feed = ''+(object.message)+'\n\n___________________________________\n\n\n';
+					$('.feeds').append(feed);
+				}
+			});
+		}
+
+		$(document).ready(function(){
+			$('#feed_switch').on('click', function(){
+				stop_feeding = true;
+			});
+		});
+		
+    </script>
+
+    <style>
+    	body{
+    		font-family: sans-serif;
+    		font-size: 16px;
+    		color: #444;
+    		text-align: center;
+    	}
+
+    	.center{
+    		width: 500px;
+    		margin: 0 auto;
+    	}
+
+    	.wrap{
+    		width: 500px;
+    		float: left;
+    	}
+
+    	.status{
+    		background: #ccc;
+    		padding: 8px;
+    		width: 100%;
+    	}
+    </style>
+
+</head>
+<body>
+
+<div class="center"><div class="wrap">
+	
+
+	<h1>Get My FB Wall Status</h1>
+	<p>As the name indicates, give us your fb permission and we will get all of your wall fb status. Then you can just select all and save it into a text file or word for further processing</p>
+
+	<p><span class="status"></span> <br/> <button id="feed_switch">stop feed</button>
+	</p>
+
+	<textarea class="feeds" style="width: 480px; height: 500px;">
+		
+	</textarea>
+</div></div>
+
+</body>
+</html>
